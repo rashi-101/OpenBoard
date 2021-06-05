@@ -1,0 +1,199 @@
+body{
+    margin: 0;
+
+}
+
+*{
+    box-sizing:border-box;
+}
+
+.widget-container{
+    padding-top:1vw;
+    padding-bottom: 1vw;
+    border-radius: 5%;
+    background-color: lightgrey;
+    border: 0.3px solid darkgray;
+    width: 8vw;
+    min-width:60px;
+    height: 70vh;
+    margin-left: 2vw;
+    max-width: 80px;
+    cursor:move;
+    z-index: 3;
+    position: absolute; 
+    left:0;
+    top:18vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow:  5px 5px 20px grey;
+}
+
+.window-container{
+    height:100vh;
+    width: 100vw;
+    background-color: pink;
+    margin:0;
+}
+
+.widget{
+    /* border-radius: 30%; */
+     background-color:lightgrey;
+    font-size:1rem;
+    height: 4rem;
+    width: 100%;
+    min-width: 3vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor:pointer;
+    color: rgb(110, 106, 106);
+    text-shadow: 1px 1px 1px teal;
+}
+
+/* #canvas{
+    position: relative;
+    z-index: 2;
+} */
+
+.functions{
+    height:10vh;
+    width: 100vw;
+    background-color: lightgrey;
+    position:absolute;
+    z-index:3;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0px 5px 10px gray;
+}
+#pencil{
+    color: rgb(110, 106, 106);
+    cursor: pointer;
+}
+.function{
+    margin-left: 3vw;
+    height:80%;
+    width: 15%;
+    /* min-width: 200px; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.f-container{
+    width:100%;
+    height:90%;   
+    background-color: lightgrey;
+}
+.elements{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.color, .p-size{
+    width:20%;
+    height:80%;
+    border: 2px solid gray;
+    cursor: pointer;
+    border-radius: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.about{
+    font-size: 1.1rem;
+    background-color: rgb(131, 129, 129);
+    width: 100%;
+    text-align:center;
+}
+.blue{
+    background-color: blue;
+}
+.red{
+    background-color: red;
+}
+.yellow{
+    background-color: yellow;
+}
+.green{
+    background-color: green;
+}
+
+.canvas-bg-color{
+    width: 100%;
+    height:inherit;
+    margin:0;
+}
+
+.canvas-color{
+    width: 5%;
+    min-width: 100px;
+}
+
+#canvas-color{
+    width: 100%;
+    height: 90%;
+    cursor: pointer;
+}
+.widget > img {
+    height:3.2rem;
+    /* border: 2px solid teal; */
+}
+.selected{
+    box-shadow: black;
+}
+#download{
+    cursor: pointer;
+}
+#upload{
+    height: 55px;
+}
+
+#imgUpload{
+     height: 50px;
+     min-width: 50px;
+     max-width: 50px;
+    position: absolute;
+    z-index: 5;
+    color: transparent;
+    background-color: teal;
+    margin:0;
+    opacity: 0    ;
+    cursor: pointer;
+}
+
+#img-upload{
+    max-width: 50px;
+    min-width: 50px;
+    height: 50px;
+    margin:0;
+}
+
+.line-width{
+    background-color: black;
+    border-radius: 50%;
+}
+
+div[id="1"]{
+    height:30%;
+    width: 30%;
+}
+
+div[id="5"]{
+    height:50%;
+    width: 50%;
+}
+
+div[id="9"]{
+    height:60%;
+    width: 60%;
+}
+
+div[id="13"]{
+    height:70%;
+    width: 70%;
+}

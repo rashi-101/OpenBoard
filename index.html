@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Board</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+
+<body>
+    <div class="functions">
+        <div class="function">
+            <div class="elements f-container">
+                <div class="color blue"></div>
+                <div class="color red"></div>
+                <div class="color yellow"></div>
+                <div class="color green"></div>
+            </div>
+            <div class="about"> Color</div>
+        </div>
+        <div class="function">
+            <div class="elements f-container">
+                <div class="p-size">
+                    <div class="line-width" id="1"></div>
+                </div>
+                <div class="p-size">
+                    <div class="line-width" id="5"></div>
+                </div>
+                <div class="p-size">
+                    <div class="line-width" id="9"></div>
+                </div>
+                <div class="p-size">
+                    <div class="line-width" id="13"></div>
+                </div>
+            </div>
+            <div class="about"> Pointer size</div>
+        </div>
+        <div class="function canvas-color">
+            <div class="canvas-bg-color f-container">
+                <input type="color" id="canvas-color">
+            </div>
+            <div class="about">Canvas Color</div>
+        </div>
+        <div class="function">
+            <img src="https://img.icons8.com/dusk/64/000000/desktop-download.png" id="download"/>
+        </div>
+        <div class="function" id="img-upload">
+            <img src="https://img.icons8.com/dusk/64/000000/image-file.png" id="upload"/>
+            <input type='file' id="imgUpload"></input></img>
+        </div>
+    </div>
+    <div class="window-container">
+        <canvas id="canvas" height="700" width="700"></canvas>
+        <div class="widget-container" draggable="true" id="widget-container-id">
+            <div class="widget" id="eraser">
+                <!-- <i class="fas fa-eraser"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/26e07f/erase.png"/>
+            </div>
+            
+            <div class="widget" id="pencil">
+                <!-- <i class="fas fa-pencil-alt"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/000000/pencil.png"/>
+            </div>
+            <div class="widget" id="line">
+                <!-- <i class="fas fa-highlighter"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/000000/vertical-line.png"/>
+            </div>
+            
+            <div class="widget" id="undo">
+                <!-- <i class="fas fa-undo"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/26e07f/undo.png"/>
+            </div>
+            <div class="widget" id="redo">
+                <!-- <i class="fas fa-redo"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/26e07f/redo.png"/>
+            </div>
+            <div class="widget" id="zoom-out">
+                <!-- <i class="fas fa-search-minus"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/26e07f/zoom-out.png"/>
+            </div>
+            <div class="widget" id="zoom-in">
+                <!-- <i class="fas fa-search-plus"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/26e07f/zoom-in.png"/>
+            </div>
+            <div class="widget" id="clear">
+                <!-- <i class="far fa-times-circle"></i> -->
+                <img src="https://img.icons8.com/cute-clipart/64/000000/clear-symbol.png"/>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
