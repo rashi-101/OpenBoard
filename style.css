@@ -10,7 +10,7 @@ body{
 .widget-container{
     padding-top:1vw;
     padding-bottom: 1vw;
-    border-radius: 5%;
+    border-radius: 1rem;
     background-color: lightgrey;
     border: 0.3px solid darkgray;
     width: 8vw;
@@ -52,13 +52,8 @@ body{
     text-shadow: 1px 1px 1px teal;
 }
 
-/* #canvas{
-    position: relative;
-    z-index: 2;
-} */
-
 .functions{
-    height:10vh;
+    height:11vh;
     width: 100vw;
     background-color: lightgrey;
     position:absolute;
