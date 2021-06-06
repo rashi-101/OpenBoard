@@ -1,4 +1,3 @@
-
 let widgetsContainer = document.querySelector(".widget-container");
 let windowContainer = document.querySelector(".window-container ");
 let pencil = document.querySelector("#pencil");
@@ -23,17 +22,39 @@ let upload = document.querySelector("#imgUpload");
 let imgArr =[];
 let ptSize = document.querySelectorAll(".line-width");
 let line = document.querySelector("#line");
+let lineArr =[];
+let undoArr = [];
+let redoArr=[];
 
-if(localStorage.getItem("points")){
-    points = JSON.parse(localStorage.getItem("points"));
+// if(localStorage.getItem("points")){
+//     points = JSON.parse(localStorage.getItem("points"));
+// }
+// if(localStorage.getItem("imgArr")){
+//     imgArr = JSON.parse(localStorage.getItem("imgArr"));
+// }
+// if(localStorage.getItem("lineArr")){
+//     lineArr = JSON.parse(localStorage.getItem("lineArr"));
+// }
+// redraw();
+if(localStorage.getItem("undoArr")){
+    undoArr = JSON.parse(localStorage.getItem("undoArr"));
+    if(undoArr.length!=0){
+        if(undoArr[0].points.length>0){
+            points = undoArr[0].points;
+        }
+        if(undoArr[0].imgArr.length>0){
+         imgArr = undoArr[0].imgArr;
+        }
+        if(undoArr[0].lineArr.length>0){
+            lineArr = undoArr[0].lineArr;
+        }
+    }
+    
+    redraw();
 }
-if(localStorage.getItem("imgArr")){
-    imgArr = JSON.parse(localStorage.getItem("imgArr"));
-}
-redraw();
 
 widgetsContainer.addEventListener("dragstart", function (event) {
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
+    // windowContainer.removeEventListener("mousedown",pencilMouseDown);
     this.style.opacity = '0.4';
     var style = window.getComputedStyle(event.target, null);
     event.dataTransfer.setData("text/plain",
@@ -42,11 +63,11 @@ widgetsContainer.addEventListener("dragstart", function (event) {
 });
 
 windowContainer.addEventListener("dragover", function (e) {
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
+    // windowContainer.removeEventListener("mousedown",pencilMouseDown);
     e.preventDefault();
 });
 windowContainer.addEventListener("drop", function (event) {
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
+    // windowContainer.removeEventListener("mousedown",pencilMouseDown);
 
     var offset = event.dataTransfer.getData("text/plain").split(',');
     widgetsContainer.style.left = (event.clientX + parseInt(offset[0], 10)) + 'px';
@@ -60,7 +81,6 @@ function drawWithPencil(e) {
     console.log("clicked pencil");
     windowContainer.addEventListener("mousedown", pencilMouseDown);   
     windowContainer.removeEventListener("mousedown",eraserMouseDown);
-    //windowContainer.removeEventListener("mousedown",lineMouseDown);
     tool.strokeStyle="black";
     tool.lineWidth=1;
     tool.lineCap = 'round';
@@ -77,27 +97,36 @@ function drawWithPencil(e) {
             tool.lineWidth=ptSize[i].id;
         });
     }
-}
-function pencilMouseDown (e) {
-    console.log("pencil mousedown");
-     tool.beginPath();
-    tool.moveTo(e.clientX, e.clientY);
-    let toolColor=tool.strokeStyle;
-    let lineWidth= tool.lineWidth;
-    points.push({ x: e.clientX, y: e.clientY, erased:false, toolColor:toolColor, type:"md",lineWidth:lineWidth});
-    windowContainer.addEventListener("mousemove", mouseMove);
-    function mouseMove(e) {
-        let x = e.clientX;
-        let y = e.clientY;
-        tool.lineTo(x, y);
-        points.push({ x: x, y: y, erased:false, toolColor:toolColor, type:"mm",lineWidth:lineWidth});
-        tool.stroke();
-        // tool.save();
+
+    function pencilMouseDown (e) {
+        console.log("pencil mousedown");
+         tool.beginPath();
+        tool.moveTo(e.clientX, e.clientY);
+        let toolColor=tool.strokeStyle;
+        let lineWidth= tool.lineWidth;
+        points.push({ x: e.clientX, y: e.clientY, erased:false, toolColor:toolColor, type:"md",lineWidth:lineWidth});
+        // undoEle.push({ x: e.clientX, y: e.clientY, erased:false, toolColor:toolColor, type:"md",lineWidth:lineWidth,widget:"pencil"});
+        windowContainer.addEventListener("mousemove", mouseMove);
+
+        function mouseMove(e) {
+            let x = e.clientX;
+            let y = e.clientY;
+            tool.lineTo(x, y);
+            points.push({ x: x, y: y, erased:false, toolColor:toolColor, type:"mm",lineWidth:lineWidth});
+            // undoEle.push({ x: x, y: y, erased:false, toolColor:toolColor, type:"mm",lineWidth:lineWidth});
+            tool.stroke();
+            // tool.save();
+        }
+        windowContainer.addEventListener("mouseup", pencilUp);
+        function pencilUp(e) {
+            undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+            // state++;
+            windowContainer.removeEventListener("mousemove", mouseMove);
+            windowContainer.removeEventListener("mousedown",pencilMouseDown);
+            localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
+            windowContainer.removeEventListener("mouseup",pencilUp);
+        }
     }
-    windowContainer.addEventListener("mouseup", function (e) {
-        windowContainer.removeEventListener("mousemove", mouseMove);
-        localStorage.setItem("points", JSON.stringify(points));
-    });
 }
 
 window.addEventListener("resize", function () {
@@ -108,11 +137,24 @@ window.addEventListener("resize", function () {
             tool.lineWidth=ptSize[i].id;
         });
     }
-    if(points.length !=0){
-        redraw();
-    }
+    // if(points.length !=0 || imgArr.length!=0 || lineArr.length!=0){
+        redraw();   
 });
 function redraw() { 
+//     let currIdx;
+//   let pArr ;
+//   let lArr;
+//    let iArr;
+    if(undoArr.length!=0 &&undoArr!=null){
+         currIdx =undoArr.length-1; 
+         points = undoArr[currIdx].points;
+         imgArr = undoArr[currIdx].imgArr;
+        lineArr = undoArr[currIdx].lineArr;
+    }else{
+        points=[];
+        imgArr=[];
+        lineArr=[];
+    }
     if(points!=null){
     for (let i = 0; i < points.length; i++) { 
         if(points[i].erased==true){
@@ -135,52 +177,67 @@ function redraw() {
     for(let i=0; i<imgArr.length; i++){
         let img = new Image();
             img.src = imgArr[i].img;
-        tool.drawImage(img, 0, 0,img.width,img.height,imgArr[i].x,imgArr[i].y,200,200);
+            let wid = imgArr[i].wid;
+            let ht = imgArr[i].ht;
+        tool.drawImage(img, 0, 0,img.width,img.height,imgArr[i].x,imgArr[i].y,wid,ht);
         tool.beginPath();
-                tool.rect(imgArr[i].x, imgArr[i].y, 200, 200);
+                tool.rect(imgArr[i].x, imgArr[i].y, wid, ht);
                 tool.lineWidth = 3;
                 tool.strokeStyle = 'black';
                 tool.stroke();
     }
-    localStorage.setItem("points", JSON.stringify(points));
-    localStorage.setItem("imgArr", JSON.stringify(imgArr));
 
-}
-}
-
-let canvasCleared = false;
-clearCanvas.addEventListener("click", function(){
-    console.log("cleaar click")
-    // tool.clearRect(0, 0, canvas.width, canvas.height);
-    canvasCleared = true;
-    while(points.length!=0){
-        redoArr.push(points.pop());
+    if(lineArr!=null){
+        for(let i=0; i<lineArr.length; i++){
+            tool.strokeStyle = lineArr[i].toolColor;
+            tool.lineWidth = lineArr[i].lineWidth;
+            tool.beginPath();
+            tool.moveTo(lineArr[i].startX, lineArr[i].startY);
+            tool.lineTo(lineArr[i].endX, lineArr[i].endY);
+            tool.stroke();
+        }
     }
+    localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
+}
+}
+
+clearCanvas.addEventListener("click", function(){
+    if(confirm("All your progress will be gone, are you sure you want to clear the slate?")){
+        undoArr=[];
+    redoArr=[];
     tool.clearRect(0, 0, canvas.width, canvas.height);
-    imgArr=[];
-    redraw();
+    redraw()
+    }
+    console.log("cleaar click"); 
+    // while(undoArr.length!=0){
+    //     redoArr.push(undoArr.pop());
+    // }
+    ;
 });
 
 eraser.addEventListener("click", function(){
     console.log("clicked eraser")
     tool.lineWidth=3;
     tool.lineCap = 'round';
-    windowContainer.removeEventListener("mousedown", pencilMouseDown);
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
+    // windowContainer.removeEventListener("mousedown", pencilMouseDown);
+    // windowContainer.removeEventListener("mousedown",pencilMouseDown);
+    for(let i=0;i<ptSize.length;i++){
+        ptSize[i].addEventListener("click",function(){
+            tool.lineWidth+=ptSize[i].id;
+        });
+    }
     windowContainer.addEventListener("mousedown", eraserMouseDown);
     
 });
 function eraserMouseDown(e){
     tool.beginPath();
-    
     tool.moveTo(e.clientX, e.clientY);
     tool.strokeStyle = canvas.style.backgroundColor;
     let toolColor=tool.strokeStyle;
     let lineWidth=tool.lineWidth;
-    points.push({ x: e.clientX, y: e.clientY, erased:true, toolColor:toolColor, type:"mm",lineWidth:lineWidth});
-
+    points.push({ x: e.clientX, y: e.clientY, erased:true, toolColor:toolColor, type:"md",lineWidth:lineWidth});
     windowContainer.addEventListener("mousemove",eraseMoouseUp);
-    function eraseMoouseUp(e){
+    function eraseMoouseUp(ev){
     // let x = e.clientX;
     // let y = e.clientY - functions.getBoundingClientRect().height;
     // tool.lineTo(x, y);
@@ -193,18 +250,20 @@ function eraserMouseDown(e){
     //     }
     // }
     // tool.stroke();
-    let x = e.clientX;
-        let y = e.clientY;
-        
+    let x = ev.clientX;
+        let y = ev.clientY;   
         tool.lineTo(x, y);
         points.push({ x: x, y: y, erased:true, toolColor:toolColor, type:"mm",lineWidth:lineWidth});
         tool.stroke();
     }
-    windowContainer.addEventListener("mouseup", function (e) {
+    windowContainer.addEventListener("mouseup", eraseUp);
+    function eraseUp (e) {
+        undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+        localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
         windowContainer.removeEventListener("mousemove", eraseMoouseUp);
-        localStorage.setItem("points", JSON.stringify(points));
-
-    });        
+        windowContainer.removeEventListener("mousedown",eraserMouseDown);
+       windowContainer.removeEventListener("mouseup",eraseUp);
+    }        
 }
 
 canvasColor.addEventListener("change",function(){
@@ -237,38 +296,27 @@ zoomOut.addEventListener("click", function(){
     }
 });
 
-let redoArr=[];
+
 undo.addEventListener("click",function(){
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
-    windowContainer.removeEventListener("mousedown",eraserMouseDown);
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
     console.log("undo clicked");
-    if(canvasCleared){
-        while(redoArr.length!=0){
-            points.push(redoArr.pop());
-        }
-        calvasCleared = false;
+    if(undoArr.length==0){
+        alert("You havent done enough to regret your past");
+        // localStorage.clear();
     }else{
-        redoArr.push(points.pop());
-        let i=points.length-1;
-        while(points[i].type!="md"){
-           redoArr.push(points.pop());
-            i--;
-        }
-        redoArr.push(points.pop());
+        redoArr.push(undoArr.pop());
         tool.clearRect(0, 0, canvas.width, canvas.height);
-    }
         redraw();
+    }   
 });
 
 redo.addEventListener("click",function(){
-    windowContainer.removeEventListener("mousedown",pencilMouseDown);
-    windowContainer.removeEventListener("mousedown",eraserMouseDown);
-    let i=redoArr.length-1;
-    while(redoArr.length!=0 || redoArr[i].type!="md"){
-        points.push(redoArr.pop());
-    }
-    redraw();
+    if(redoArr.length==0){
+        alert("Nothing to redo, its too late now to think over your carefree decisions");
+    }else{
+        undoArr.push(redoArr.pop());
+        tool.clearRect(0, 0, canvas.width, canvas.height);
+        redraw();
+    }   
 });
 
 download.addEventListener("click",function(){
@@ -282,6 +330,7 @@ download.addEventListener("click",function(){
 
 upload.addEventListener("change", uploadImage);
 function uploadImage(){
+    windowContainer.style.cursor="crosshair";
     if (this.files && this.files[0]) {
         var FR = new FileReader();
         FR.onload = function (e) {
@@ -293,30 +342,38 @@ function uploadImage(){
             function drawImg(e){
                 let x = e.clientX;
                 let y = e.clientY;
-                tool.drawImage(img, 0, 0,img.width,img.height,x,y,200,200);
+                windowContainer.addEventListener("mouseup",stopImg);
+                function stopImg(ev){
+                    let btmRightX = ev.clientX;
+                    let btmRightY = ev.clientY;
+                    let newWidth = btmRightX-x;
+                    let newHeight = btmRightY-y;
+                    console.log(newWidth+","+newHeight);
+                tool.drawImage(img, 0, 0,img.width,img.height,x,y,newWidth,newHeight);
                 tool.beginPath();
-                tool.rect(x, y, 200, 200);
+                tool.rect(x, y, newWidth, newHeight);
                 tool.lineWidth = 3;
                 tool.strokeStyle = 'black';
                 tool.stroke();
-                windowContainer.addEventListener("mouseup",function(){
                     windowContainer.removeEventListener("mousedown",drawImg);
-                });
-                imgArr.push({img:img.src,x:x,y:y});
-                localStorage.setItem("imgArr",JSON.stringify(imgArr));
-
-            }
-            
+                    imgArr.push({img:img.src,x:x,y:y,ht:newHeight,wid:newWidth});
+                    undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+                    localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
+                    windowContainer.style.cursor="context-menu";
+                    windowContainer.removeEventListener("mouseup",stopImg);
+                }
+                
+            }    
         };
-        FR.readAsDataURL(this.files[0]);
-        
+        FR.readAsDataURL(this.files[0]); 
     }
 }
 
-line.addEventListener("click",function(){
-    windowContainer.removeEventListener("mousedown",pencilMouseDown)
+line.addEventListener("click",lineClick);
+
+function lineClick(){
+    // windowContainer.removeEventListener("mousedown",pencilMouseDown)
     windowContainer.removeEventListener("mousedown",eraserMouseDown);
-    windowContainer.addEventListener("mousedown",drawLine);
     tool.strokeStyle="black";
     tool.lineWidth=1;
     tool.lineCap = 'butt';
@@ -330,16 +387,30 @@ line.addEventListener("click",function(){
             tool.lineWidth=ptSize[i].id;
         });
     }
+    windowContainer.addEventListener("mousedown",drawLine);
     function drawLine(e){
+        let startx = e.clientX;
+        let starty = e.clientY;
         windowContainer.style.cursor="crosshair";
         tool.beginPath();
         tool.moveTo(e.clientX,e.clientY);
-        windowContainer.addEventListener("mouseup",function(ev){
+        let toolColor = tool.strokeStyle;
+        let lineWidth = tool.lineWidth;
+        windowContainer.addEventListener("mouseup",lineUp);
+        function lineUp(ev){
+            console.log("up")
+            let endx = ev.clientX;
+            let endy = ev.clientY;
+            lineArr.push({startX:startx, startY:starty, endX:endx, endY:endy, toolColor:toolColor,lineWidth:lineWidth, linecap:tool.lineCap});
             tool.lineTo(ev.clientX,ev.clientY);
             tool.stroke();
+            tool.closePath();
             windowContainer.style.cursor="context-menu";
-        });
+           windowContainer.removeEventListener("mousedown",drawLine);
+           windowContainer.removeEventListener("mouseup", lineUp);
+           undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+           localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
+        }
     }
-});
-
-
+    
+}
