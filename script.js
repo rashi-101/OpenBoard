@@ -1,3 +1,4 @@
+
 let widgetsContainer = document.querySelector(".widget-container");
 let windowContainer = document.querySelector(".window-container ");
 let pencil = document.querySelector("#pencil");
@@ -36,6 +37,10 @@ let redoArr=[];
 //     lineArr = JSON.parse(localStorage.getItem("lineArr"));
 // }
 // redraw();
+
+if(localStorage.getItem("canvasBgColor")){
+    canvas.style.backgroundColor = JSON.parse(localStorage.getItem("canvasBgColor"));
+}
 if(localStorage.getItem("undoArr")){
     undoArr = JSON.parse(localStorage.getItem("undoArr"));
     if(undoArr.length!=0){
@@ -268,6 +273,7 @@ function eraserMouseDown(e){
 
 canvasColor.addEventListener("change",function(){
         canvas.style.backgroundColor=this.value;
+        localStorage.setItem("canvasBgColor",JSON.stringify(this.value));
         redraw();
 });
 
@@ -320,13 +326,11 @@ redo.addEventListener("click",function(){
 });
 
 download.addEventListener("click",function(){
-    //to ensure current background gets downloaded:first save tool's current status, then to ensure that the canvas is filled behind the exitsting drawing change global Composite operation to destination over, fill canvas and restore the previous tool's status
     tool.save();
     tool.globalCompositeOperation = 'destination-over';
     tool.fillStyle = canvas.style.backgroundColor;
     tool.fillRect(0, 0, canvas.width, canvas.height);
     tool.restore();
-    //done
     let link = canvas.toDataURL();
     let anchor = document.createElement("a");
     anchor.href = link;
