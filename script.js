@@ -320,6 +320,13 @@ redo.addEventListener("click",function(){
 });
 
 download.addEventListener("click",function(){
+    //to ensure current background gets downloaded:first save tool's current status, then to ensure that the canvas is filled behind the exitsting drawing change global Composite operation to destination over, fill canvas and restore the previous tool's status
+    tool.save();
+    tool.globalCompositeOperation = 'destination-over';
+    tool.fillStyle = canvas.style.backgroundColor;
+    tool.fillRect(0, 0, canvas.width, canvas.height);
+    tool.restore();
+    //done
     let link = canvas.toDataURL();
     let anchor = document.createElement("a");
     anchor.href = link;
