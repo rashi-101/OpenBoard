@@ -40,6 +40,9 @@ let redoArr=[];
 
 if(localStorage.getItem("canvasBgColor")){
     canvas.style.backgroundColor = JSON.parse(localStorage.getItem("canvasBgColor"));
+    let rgb = canvas.style.backgroundColor;
+    let rgbArr = rgb.slice(4,rgb.length-1).split(",");
+    canvasColor.value = rgbToHex(Number(rgbArr[0]),Number(rgbArr[1]),Number(rgbArr[2]));
 }
 if(localStorage.getItem("undoArr")){
     undoArr = JSON.parse(localStorage.getItem("undoArr"));
@@ -425,3 +428,12 @@ function lineClick(){
     }
     
 }
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+  }
+  
+  function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+  }
