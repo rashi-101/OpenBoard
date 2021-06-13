@@ -23,10 +23,11 @@ let upload = document.querySelector("#imgUpload");
 let imgArr =[];
 let ptSize = document.querySelectorAll(".line-width");
 let line = document.querySelector("#line");
+let text = document.querySelector("#text");
 let lineArr =[];
 let undoArr = [];
 let redoArr=[];
-
+let textArr = [];
 // if(localStorage.getItem("points")){
 //     points = JSON.parse(localStorage.getItem("points"));
 // }
@@ -55,6 +56,9 @@ if(localStorage.getItem("undoArr")){
         }
         if(undoArr[0].lineArr.length>0){
             lineArr = undoArr[0].lineArr;
+        }
+        if(undoArr[0].textArr.length>0){
+            textArr=undoArr[0].textArr;
         }
     }
     
@@ -127,7 +131,7 @@ function drawWithPencil(e) {
         }
         windowContainer.addEventListener("mouseup", pencilUp);
         function pencilUp(e) {
-            undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+            undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr],textArr:[...textArr]});
             // state++;
             windowContainer.removeEventListener("mousemove", mouseMove);
             windowContainer.removeEventListener("mousedown",pencilMouseDown);
@@ -158,10 +162,12 @@ function redraw() {
          points = undoArr[currIdx].points;
          imgArr = undoArr[currIdx].imgArr;
         lineArr = undoArr[currIdx].lineArr;
+        textArr=undoArr[currIdx].textArr;
     }else{
         points=[];
         imgArr=[];
         lineArr=[];
+        textArr=[];
     }
     if(points!=null){
     for (let i = 0; i < points.length; i++) { 
@@ -203,6 +209,12 @@ function redraw() {
             tool.moveTo(lineArr[i].startX, lineArr[i].startY);
             tool.lineTo(lineArr[i].endX, lineArr[i].endY);
             tool.stroke();
+        }
+    }
+    if(textArr!=null){
+        tool.font = "60px Lucida Sans";
+        for(let i=0; i<textArr.length;i++){
+                tool.fillText(textArr[i].ip, textArr[i].x, textArr[i].y)
         }
     }
     localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
@@ -266,7 +278,7 @@ function eraserMouseDown(e){
     }
     windowContainer.addEventListener("mouseup", eraseUp);
     function eraseUp (e) {
-        undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+        undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr],textArr:[...textArr]});
         localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
         windowContainer.removeEventListener("mousemove", eraseMoouseUp);
         windowContainer.removeEventListener("mousedown",eraserMouseDown);
@@ -371,7 +383,7 @@ function uploadImage(){
                 tool.stroke();
                     windowContainer.removeEventListener("mousedown",drawImg);
                     imgArr.push({img:img.src,x:x,y:y,ht:newHeight,wid:newWidth});
-                    undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+                    undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr],textArr:[...textArr]});
                     localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
                     windowContainer.style.cursor="context-menu";
                     windowContainer.removeEventListener("mouseup",stopImg);
@@ -422,7 +434,7 @@ function lineClick(){
             windowContainer.style.cursor="context-menu";
            windowContainer.removeEventListener("mousedown",drawLine);
            windowContainer.removeEventListener("mouseup", lineUp);
-           undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr]});
+           undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr],textArr:[...textArr]});
            localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
         }
     }
@@ -437,3 +449,49 @@ function componentToHex(c) {
   function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
   }
+
+  text.addEventListener("click", function(){
+
+    let textDiv = document.createElement("div");
+    textDiv.setAttribute("class", "textEle");
+    document.body.appendChild(textDiv);
+    let textIp = document.createElement("textarea");
+    textIp.setAttribute("class", "textInp");
+    document.body.appendChild(textIp);
+    let textOption = document.createElement("div");
+    document.body.appendChild(textOption);
+    textOption.setAttribute("class","textOption");
+    textOption.innerText="Done!";
+    let ip ="";
+    textOption.addEventListener("click", doneFn);
+    textIp.addEventListener("keydown", function(e){
+        if(e.key =="Enter"){
+            doneFn(e);
+        }
+    })
+    function doneFn(e){
+        ip = textIp.value;
+        console.log(ip);
+        document.body.removeChild(textDiv);
+        document.body.removeChild(textIp);
+        document.body.removeChild(textOption);
+        
+        
+        windowContainer.addEventListener("mousedown", typeText);
+        function typeText(e){
+            let x = e.clientX;
+            let y = e.clientY;
+            textArr.push({ip: ip, x:x,y:y});
+        undoArr.push({points:[...points], imgArr:[...imgArr],lineArr:[...lineArr],textArr:[...textArr]});
+        localStorage.setItem("undoArr",JSON.stringify([...undoArr.slice(undoArr.length-1)]));
+
+        tool.font = "60px Lucida Sans";
+        tool.fillText(ip,x,y);
+    }
+    windowContainer.addEventListener("mouseup", function(){
+        windowContainer.removeEventListener("mousedown",typeText);
+    })
+    }
+
+    
+  });
