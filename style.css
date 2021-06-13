@@ -62,6 +62,7 @@ body{
     justify-content: space-around;
     align-items: center;
     box-shadow: 0px 5px 10px gray;
+    /* font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
 }
 #pencil{
     color: rgb(110, 106, 106);
@@ -76,6 +77,8 @@ body{
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
+    cursor:pointer;
+    
 }
 
 .f-container{
@@ -191,4 +194,50 @@ div[id="9"]{
 div[id="13"]{
     height:70%;
     width: 70%;
+}
+
+#text{
+    width:30px;
+    margin-top:10px;
+}
+.textEle{
+    height: 100vh;
+    width: 100vw;
+    z-index: 10;
+    position: absolute;
+    background-color: black;
+    opacity: 0.5;
+    top:0;
+    left:0;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+.textInp:focus{
+    box-shadow: 5px 5px 20px white;
+    border:4px solid white;  
+}
+
+.textInp , .textOption{
+    outline:none;
+    position: absolute;
+    z-index:15;
+    left:30vw;
+    top:20vh;
+    opacity: 1;
+    width:30vw;
+    height:20vh;
+    background-color: lightgrey;
+    border: 3px solid white;
+    color:rgb(97, 93, 93);
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.textOption{
+    top:40vh;
+    height:5vh;
+    text-align:center;
+    color:rgb(97, 93, 93);
+    cursor:pointer;
 }
